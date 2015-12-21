@@ -21,8 +21,10 @@ module.exports = function*(next) {
 
 ```bash
 $ dora --plugins milk
-\# 也可以通过 file 参数来指定文件
+# 通过 file 参数来指定文件
 $ dora --plugins milk?file=~/somePath/milk.js
+# 通过 watch 参数来监控文件变化自动重新加载
+$ dora --plugins milk?watch=true
 ```
 
 

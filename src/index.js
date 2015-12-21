@@ -16,6 +16,14 @@ const existsSync = fs.existsSync ? fs.existsSync : function(file) {
 
 let milkHandler = null;
 const cwd = process.cwd();
+let changeTimeout = null;
+
+function dealChange(file) {
+  changeTimeout = null;
+  delete require.cache[require.resolve(file)];
+  milkHandler = require(file);
+  console.log(`dora-plugin-milk: milk file '${file}' changed and reloaded.`);
+}
 
 export default {
   'middleware.before': function(args) {
@@ -29,6 +37,22 @@ export default {
       throw new Error(`dora-plugin-milk: milk file '${file}' not found.`);
     }
     milkHandler = require(file);
+    if (args.query.watch) {
+      fs.watch(file, {persistent: false}, function() {
+        if (changeTimeout) {
+          clearTimeout(changeTimeout);
+        }
+        // 延迟 500ms 重新加载 milk.js 文件
+        changeTimeout = setTimeout(dealChange.bind(this, file), 500);
+      });
+    }
+
+    process.on('exit', function() {
+      fs.unwatch(file);
+    });
+    process.on('SIGINT', function() {
+      fs.unwatch(file);
+    });
   },
   'middleware': function() {
     return function*(next) {
