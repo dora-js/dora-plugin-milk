@@ -4,6 +4,12 @@
 
 ----
 
+## Install
+
+````bash
+npm install --save-dev dora-plugin-milk
+````
+
 ## Usage
 
 * 在项目根目录里添加 `milk.js` 文件.
