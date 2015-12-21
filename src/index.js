@@ -46,13 +46,6 @@ export default {
         changeTimeout = setTimeout(dealChange.bind(this, file), 500);
       });
     }
-
-    process.on('exit', function() {
-      fs.unwatch(file);
-    });
-    process.on('SIGINT', function() {
-      fs.unwatch(file);
-    });
   },
   'middleware': function() {
     return function*(next) {
