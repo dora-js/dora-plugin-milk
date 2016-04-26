@@ -26,8 +26,8 @@ function dealChange(file) {
 }
 
 export default {
-  'middleware.before': function(args) {
-    let file = args.query.file;
+  'middleware.before': function() {
+    let file = this.query.file;
     if (!file) {
       file = join(cwd, 'milk.js');
     } else if (file[0] !== '/') {
@@ -37,7 +37,7 @@ export default {
       throw new Error(`dora-plugin-milk: milk file '${file}' not found.`);
     }
     milkHandler = require(file);
-    if (args.query.watch) {
+    if (this.query.watch) {
       fs.watch(file, {persistent: false}, function() {
         if (changeTimeout) {
           clearTimeout(changeTimeout);
@@ -48,7 +48,7 @@ export default {
     }
   },
   'middleware': function() {
-    return function*(next) {
+    return function *(next) {
       if (typeof milkHandler !== 'function') {
         this.body = milkHandler;
         yield next;
